@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTwilioData } from "../data/TwilioData";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import Participant from "../components/call/Participant";
@@ -11,11 +11,14 @@ import LocalParticipant from "../components/call/LocalParticipant";
 
 const Classroom = () => {
   const [auth] = useLocalStorage("auth", {});
+  const navigate = useNavigate();
   const { sessionid } = useParams();
   const { GetRoomToken } = useTwilioData();
   const [twiliotoken, setTwilioToken] = useState(null);
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
+  const [isvideoon, setIsVideoOn] = useState(true);
+  const [isaudioon, setIsAudioOn] = useState(true);
 
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
@@ -58,6 +61,37 @@ const Classroom = () => {
       });
     };
   }, [sessionid, twiliotoken]);
+
+  async function EndCall() {
+    setTwilioToken(null);
+    window.location.href = "/dashboard";
+  }
+
+  async function VideoOnOff(on) {
+    if (on) {
+      room.localParticipant.videoTracks.forEach(function (track, trackId) {
+        track.track.disable();
+      });
+    } else {
+      room.localParticipant.videoTracks.forEach(function (track, trackId) {
+        track.track.enable();
+      });
+    }
+    setIsVideoOn(!on);
+  }
+
+  async function AudioOnOff(on) {
+    if (on) {
+      room.localParticipant.audioTracks.forEach(function (track, trackId) {
+        track.track.disable();
+      });
+    } else {
+      room.localParticipant.audioTracks.forEach(function (track, trackId) {
+        track.track.enable();
+      });
+    }
+    setIsAudioOn(!on);
+  }
 
   return (
     <>
@@ -216,6 +250,8 @@ const Classroom = () => {
                     <LocalParticipant
                       key={room.localParticipant.sid}
                       participant={room.localParticipant}
+                      isaudioon={isaudioon}
+                      isvideoon={isvideoon}
                     />
                   ) : (
                     <ParticipantNotConnected />
@@ -278,11 +314,30 @@ const Classroom = () => {
         </div>
 
         <div className="teachBotomLinks">
-          <a href="#" className="techListIcon"></a>
-          <a href="#" className="techMicIcon"></a>
-          <a href="#" className="techEndIcon active"></a>
-          <a href="#" className="techVidIcon"></a>
-          <a href="#" className="techOptIcon"></a>
+          <a
+            href="#"
+            className="techListIcon"
+            style={{ cursor: "pointer" }}
+          ></a>
+          <Link
+            to=""
+            className={isaudioon ? "techMicIcon" : "techMicIcon active"}
+            onClick={(e) => AudioOnOff(isaudioon)}
+            style={{ cursor: "pointer" }}
+          ></Link>
+          <Link
+            to=""
+            className="techEndIcon active"
+            onClick={(e) => EndCall()}
+            style={{ cursor: "pointer" }}
+          ></Link>
+          <Link
+            to=""
+            className={isvideoon ? "techVidIcon" : "techVidIcon active"}
+            onClick={(e) => VideoOnOff(isvideoon)}
+            style={{ cursor: "pointer" }}
+          ></Link>
+          <a href="#" className="techOptIcon" style={{ cursor: "pointer" }}></a>
         </div>
 
         <div className="techOptBox">

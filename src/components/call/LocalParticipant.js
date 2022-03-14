@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const LocalParticipant = ({ participant }) => {
+const LocalParticipant = ({ participant, isvideoon, isaudioon }) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
 
@@ -44,6 +44,7 @@ const LocalParticipant = ({ participant }) => {
 
   useEffect(() => {
     const videoTrack = videoTracks[0];
+    debugger;
     if (videoTrack) {
       videoTrack.attach(videoRef.current);
       return () => {
@@ -54,6 +55,7 @@ const LocalParticipant = ({ participant }) => {
 
   useEffect(() => {
     const audioTrack = audioTracks[0];
+    debugger;
     if (audioTrack) {
       audioTrack.attach(audioRef.current);
       return () => {
@@ -70,10 +72,22 @@ const LocalParticipant = ({ participant }) => {
             <img src="/img/liveIcon.svg" />
           </a>
         </div>
-        <a href="#" class="micLink"></a>
-        <a href="#" class="vidLink"></a>
-        <a href="activity-matching.html" class="stuPlusLink"></a>
-        <video ref={videoRef} autoPlay={true} />
+        <a href="#" className={isaudioon ? "micLink" : "micLink active"}></a>
+        {/* <a href="#" class="vidLink"></a>
+        <a href="activity-matching.html" class="stuPlusLink"></a> */}
+        {!isvideoon && (
+          <>
+            <div class="novidShow">
+              <img src="/img/novideoImg2Inner.svg" />
+            </div>
+            <img src="/img/novideoImg2.png" />
+          </>
+        )}
+        <video
+          ref={videoRef}
+          autoPlay={true}
+          style={{ display: isvideoon ? "block" : "none" }}
+        />
         <audio ref={audioRef} autoPlay={true} />
         <div class="stuName">
           <span>{participant.identity}</span>
