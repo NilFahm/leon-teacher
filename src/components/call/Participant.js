@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 const Participant = ({ participant }) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
+  const [isaudioon, setIsAudioOn] = useState(true);
+  const [isvideoon, setIsVideoOn] = useState(true);
   const videoRef = useRef();
   const audioRef = useRef();
 
@@ -28,11 +30,29 @@ const Participant = ({ participant }) => {
       }
     };
 
+    const trackEnabled = (track) => {
+      if (track.kind === "video") {
+        setIsVideoOn(true);
+      } else if (track.kind === "audio") {
+        setIsAudioOn(true);
+      }
+    };
+
+    const trackDisabled = (track) => {
+      if (track.kind === "video") {
+        setIsVideoOn(false);
+      } else if (track.kind === "audio") {
+        setIsAudioOn(false);
+      }
+    };
+
     setVideoTracks(trackpubsToTracks(participant.videoTracks));
     setAudioTracks(trackpubsToTracks(participant.audioTracks));
 
     participant.on("trackSubscribed", trackSubscribed);
     participant.on("trackUnsubscribed", trackUnsubscribed);
+    participant.on("trackEnabled", trackEnabled);
+    participant.on("trackDisabled", trackDisabled);
 
     return () => {
       setVideoTracks([]);
@@ -69,10 +89,22 @@ const Participant = ({ participant }) => {
             <img src="/img/liveIcon.svg" />
           </a>
         </div>
-        <a href="#" class="micLink"></a>
+        <a href="#" className={isaudioon ? "micLink" : "micLink active"}></a>
         <a href="#" class="vidLink"></a>
         <a href="activity-matching.html" class="stuPlusLink"></a>
-        <video ref={videoRef} autoPlay={true} />
+        {!isvideoon && (
+          <>
+            <div class="novidShow d-flex align-items-center justify-content-center">
+              <img src="/img/novideoImg2Inner.svg" />
+            </div>
+            <img src="/img/novideoImg2.png" />
+          </>
+        )}
+        <video
+          ref={videoRef}
+          autoPlay={true}
+          style={{ display: isvideoon ? "block" : "none" }}
+        />
         <audio ref={audioRef} autoPlay={true} />
       </div>
       <div class="stuName">
