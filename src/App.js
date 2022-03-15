@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { useLocalStorage } from "./utils/useLocalStorage";
 
 //Layouts
-import { Layouts } from "./components/layouts/Layouts";
+import { Layouts } from "./data/layouts/Layouts";
 
 //Pages
 import { Pages } from "./pages/Pages";

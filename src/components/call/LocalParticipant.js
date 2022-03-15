@@ -44,7 +44,6 @@ const LocalParticipant = ({ participant, isvideoon, isaudioon }) => {
 
   useEffect(() => {
     const videoTrack = videoTracks[0];
-    debugger;
     if (videoTrack) {
       videoTrack.attach(videoRef.current);
       return () => {
@@ -55,7 +54,6 @@ const LocalParticipant = ({ participant, isvideoon, isaudioon }) => {
 
   useEffect(() => {
     const audioTrack = audioTracks[0];
-    debugger;
     if (audioTrack) {
       audioTrack.attach(audioRef.current);
       return () => {
@@ -77,7 +75,7 @@ const LocalParticipant = ({ participant, isvideoon, isaudioon }) => {
         <a href="activity-matching.html" class="stuPlusLink"></a> */}
         {!isvideoon && (
           <>
-            <div class="novidShow">
+            <div class="novidShow d-flex align-items-center justify-content-center">
               <img src="/img/novideoImg2Inner.svg" />
             </div>
             <img src="/img/novideoImg2.png" />

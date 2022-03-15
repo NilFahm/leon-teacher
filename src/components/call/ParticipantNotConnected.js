@@ -6,7 +6,7 @@ const ParticipantNotConnected = () => {
       <div className="studListBox novideo1">
         <div className="stuImgBox1">
           <a href="activity-matching.html" className="stuPlusLink"></a>
-          <div className="novidShow">
+          <div className="novidShow d-flex align-items-center justify-content-center">
             <img src="/img/novideoImg1Inner.svg" />
           </div>
           <img src="/img/novideoImg1.png" />

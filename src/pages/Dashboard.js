@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import { useScheduleData } from "../data/ScheduleData";
 
 const Dashboard = () => {
-  const [auth] = useLocalStorage("auth", {});
+  const [auth, setAuthData] = useLocalStorage("auth", {});
   const { TeacherSchedule } = useScheduleData();
   const navigate = useNavigate();
 
@@ -17,6 +17,11 @@ const Dashboard = () => {
       setScheduleData(response[0]);
     }
   }, [auth]);
+
+  async function HandleLogout() {
+    setAuthData(null);
+    window.location.href = "/";
+  }
 
   async function StartClass(sessionid) {
     return navigate("/startcall/" + sessionid);
@@ -84,9 +89,13 @@ const Dashboard = () => {
                     <a className="dropdown-item" href="#">
                       Settings
                     </a>
-                    <a className="dropdown-item" href="#">
+                    <Link
+                      className="dropdown-item"
+                      to=""
+                      onClick={(e) => HandleLogout()}
+                    >
                       Logout
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTwilioData } from "../data/TwilioData";
 import { useLocalStorage } from "../utils/useLocalStorage";
-import Participant from "../components/call/Participant";
-import ParticipantNotConnected from "../components/call/ParticipantNotConnected";
+import StartCall from "../components/call/StartCall";
+import StartActivity from "../components/call/StartActivity";
+import io from "socket.io-client";
 
 import Video from "twilio-video";
-import LocalParticipant from "../components/call/LocalParticipant";
 
 const Classroom = () => {
   const [auth] = useLocalStorage("auth", {});
+  // const [messages, setMessages] = useLocalStorage("messages", []);
   const navigate = useNavigate();
   const { sessionid } = useParams();
   const { GetRoomToken } = useTwilioData();
@@ -19,13 +20,47 @@ const Classroom = () => {
   const [participants, setParticipants] = useState([]);
   const [isvideoon, setIsVideoOn] = useState(true);
   const [isaudioon, setIsAudioOn] = useState(true);
+  const [isactivity, setIsActivity] = useState(false);
+  const [activity, setActivity] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [messagetext, setMessageText] = useState("");
+
+  //Ref
+  const activitybtn = useRef(null);
+
+  const socket = io.connect("https://socket.fahm-technologies.com");
 
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
-      const response = await GetRoomToken(auth.token, sessionid);
-      setTwilioToken(response.authToken);
+      // const response = await GetRoomToken(auth.token, sessionid);
+      // setTwilioToken(response.authToken);
+      const joindata = { userid: auth.userid, roomname: sessionid };
+      socket.emit("joinRoom", joindata);
     }
   }, [auth]);
+
+  useEffect(() => {
+    // console.log("socket", socket);
+    // setActivity(actname);
+    // setIsActivity(true);
+    socket.on("activity", (data) => {
+      if (data.activity !== activity && data.activity !== "startcall") {
+        setActivity(data.activity);
+        setIsActivity(true);
+        activitybtn.current.click();
+      } else {
+        setActivity(null);
+        setIsActivity(false);
+      }
+    });
+
+    socket.on("message", (data) => {
+      let messa = messages;
+      messa.push(data);
+      setMessages(messa);
+      setMessageText("");
+    });
+  }, [socket]);
 
   useEffect(() => {
     const participantConnected = (participant) => {
@@ -93,6 +128,22 @@ const Classroom = () => {
     setIsAudioOn(!on);
   }
 
+  async function StartNewActivity(actname) {
+    socket.emit("activity", { activity: actname, roomname: sessionid });
+  }
+
+  async function StartCallOnly() {
+    socket.emit("activity", { activity: "startcall", roomname: sessionid });
+  }
+
+  async function SendMessage(messagedata) {
+    socket.emit("chat", {
+      roomname: sessionid,
+      username: auth.name,
+      userid: auth.id,
+      messagetext: messagedata,
+    });
+  }
   return (
     <>
       <div className="teachMainBox teachMainBox2">
@@ -194,123 +245,27 @@ const Classroom = () => {
             </div>
           </header>
 
-          <div className="container">
-            <div className="innerContain innerContain2">
-              <ul className="row">
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[0] ? (
-                    <Participant
-                      key={participants[0].sid}
-                      participant={participants[0]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[1] ? (
-                    <Participant
-                      key={participants[1].sid}
-                      participant={participants[1]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[2] ? (
-                    <Participant
-                      key={participants[2].sid}
-                      participant={participants[2]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[3] ? (
-                    <Participant
-                      key={participants[3].sid}
-                      participant={participants[3]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {room ? (
-                    <LocalParticipant
-                      key={room.localParticipant.sid}
-                      participant={room.localParticipant}
-                      isaudioon={isaudioon}
-                      isvideoon={isvideoon}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[4] ? (
-                    <Participant
-                      key={participants[4].sid}
-                      participant={participants[4]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[5] ? (
-                    <Participant
-                      key={participants[5].sid}
-                      participant={participants[5]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[6] ? (
-                    <Participant
-                      key={participants[6].sid}
-                      participant={participants[6]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-                <li className="col-lg-4 col-md-4 col-sm-4">
-                  {participants &&
-                  participants.length > 0 &&
-                  participants[7] ? (
-                    <Participant
-                      key={participants[7].sid}
-                      participant={participants[7]}
-                    />
-                  ) : (
-                    <ParticipantNotConnected />
-                  )}
-                </li>
-              </ul>
-            </div>
-
-            <div className="clear"></div>
-          </div>
+          {isactivity ? (
+            <StartActivity
+              participants={participants}
+              room={room}
+              isaudioon={isaudioon}
+              isvideoon={isvideoon}
+              StartCallOnly={StartCallOnly}
+              messages={messages}
+              auth={auth}
+              SendMessage={SendMessage}
+              messagetext={messagetext}
+              setMessageText={setMessageText}
+            />
+          ) : (
+            <StartCall
+              participants={participants}
+              room={room}
+              isaudioon={isaudioon}
+              isvideoon={isvideoon}
+            />
+          )}
         </div>
 
         <div className="teachBotomLinks">
@@ -319,25 +274,35 @@ const Classroom = () => {
             className="techListIcon"
             style={{ cursor: "pointer" }}
           ></a>
-          <Link
-            to=""
-            className={isaudioon ? "techMicIcon" : "techMicIcon active"}
-            onClick={(e) => AudioOnOff(isaudioon)}
-            style={{ cursor: "pointer" }}
-          ></Link>
+          {room && (
+            <Link
+              to=""
+              className={isaudioon ? "techMicIcon" : "techMicIcon active"}
+              onClick={(e) => room && AudioOnOff(isaudioon)}
+              style={{ cursor: "pointer" }}
+            ></Link>
+          )}
           <Link
             to=""
             className="techEndIcon active"
             onClick={(e) => EndCall()}
             style={{ cursor: "pointer" }}
           ></Link>
+          {room && (
+            <Link
+              to=""
+              className={isvideoon ? "techVidIcon" : "techVidIcon active"}
+              onClick={(e) => room && VideoOnOff(isvideoon)}
+              style={{ cursor: "pointer" }}
+              disable={!room}
+            ></Link>
+          )}
           <Link
             to=""
-            className={isvideoon ? "techVidIcon" : "techVidIcon active"}
-            onClick={(e) => VideoOnOff(isvideoon)}
+            className="techOptIcon"
             style={{ cursor: "pointer" }}
+            ref={activitybtn}
           ></Link>
-          <a href="#" className="techOptIcon" style={{ cursor: "pointer" }}></a>
         </div>
 
         <div className="techOptBox">
@@ -351,10 +316,14 @@ const Classroom = () => {
                 </a>
               </li>
               <li>
-                <a href="teacher-className-white-board.html">
+                <Link
+                  to=""
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => StartNewActivity("whiteboard")}
+                >
                   <div className="classExBox whiteBox"></div>
                   <h5>White Board</h5>
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" data-toggle="modal" data-target="#startActivitypup">
