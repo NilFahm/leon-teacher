@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
-  const [chatmessages, setChatMessages] = useState(null);
-
-  useEffect(() => {
-    setChatMessages(messages);
-  }, [messages]);
+  async function HandleSendMessage() {
+    SendMessage();
+  }
 
   return (
     <div className="chatList">
@@ -14,8 +12,8 @@ const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
       </div>
 
       <ul className="">
-        {chatmessages &&
-          chatmessages.map((item, index) => {
+        {messages &&
+          messages.map((item, index) => {
             return (
               <>
                 {item.userid === auth.id ? (
@@ -53,7 +51,7 @@ const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
       </ul>
 
       <div className="chatBoxBtn">
-        <button type="button" onClick={(e) => SendMessage()}>
+        <button type="button" onClick={(e) => HandleSendMessage()}>
           <img src="/img/chatBtn.png" />
         </button>
         <textarea

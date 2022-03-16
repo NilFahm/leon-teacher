@@ -11,7 +11,6 @@ import Video from "twilio-video";
 
 const Classroom = () => {
   const [auth] = useLocalStorage("auth", {});
-  // const [messages, setMessages] = useLocalStorage("messages", []);
   const navigate = useNavigate();
   const { sessionid } = useParams();
   const { GetRoomToken } = useTwilioData();
@@ -27,6 +26,10 @@ const Classroom = () => {
   const [bottomact, setBottomAct] = useState(false);
 
   const socket = io.connect("https://socket.fahm-technologies.com");
+
+  useEffect(() => {
+    window.localStorage.removeItem("messages");
+  }, []);
 
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
@@ -61,9 +64,14 @@ const Classroom = () => {
     });
 
     socket.on("message", (data) => {
-      let messa = messages;
+      let messa = JSON.parse(window.localStorage.getItem("messages"));
+      if (!messa) {
+        window.localStorage.setItem("messages", JSON.stringify([]));
+        messa = JSON.parse(window.localStorage.getItem("messages"));
+      }
       messa.push(data);
-      setMessages(messa);
+      window.localStorage.setItem("messages", JSON.stringify(messa));
+      setMessages(JSON.parse(window.localStorage.getItem("messages")));
       setMessageText("");
     });
 
