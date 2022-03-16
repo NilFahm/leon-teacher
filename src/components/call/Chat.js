@@ -3,11 +3,6 @@ import React, { useState, useEffect } from "react";
 const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
   const [chatmessages, setChatMessages] = useState(null);
 
-  async function HandleSendMessage() {
-    let message = messagetext;
-    SendMessage(message);
-  }
-
   useEffect(() => {
     setChatMessages(messages);
   }, [messages]);
@@ -58,7 +53,7 @@ const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
       </ul>
 
       <div className="chatBoxBtn">
-        <button type="button" onClick={(e) => HandleSendMessage()}>
+        <button type="button" onClick={(e) => SendMessage()}>
           <img src="/img/chatBtn.png" />
         </button>
         <textarea

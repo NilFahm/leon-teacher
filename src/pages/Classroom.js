@@ -49,13 +49,11 @@ const Classroom = () => {
         data.activity !== "startcall" &&
         data.activity !== "endcall"
       ) {
-        debugger;
         window.localStorage.setItem("activity", data.activity.toString());
         setActivityName(data.activity.toString());
         setIsActivity(true);
         setBottomAct(false);
       } else {
-        debugger;
         setActivityName(null);
         window.localStorage.removeItem("activity");
         setIsActivity(false);
@@ -70,7 +68,6 @@ const Classroom = () => {
     });
 
     socket.on("joinroom", (data) => {
-      debugger;
       if (window.localStorage.getItem("activity")) {
         StartCurrentActivity();
       }
@@ -168,12 +165,12 @@ const Classroom = () => {
     socket.emit("activity", { activity: "startcall", roomname: sessionid });
   }
 
-  async function SendMessage(messagedata) {
+  async function SendMessage() {
     socket.emit("chat", {
       roomname: sessionid,
       username: auth.name,
       userid: auth.id,
-      messagetext: messagedata,
+      messagetext: messagetext,
     });
   }
   return (
