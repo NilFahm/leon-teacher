@@ -15,18 +15,16 @@ const Classroom = () => {
   const navigate = useNavigate();
   const { sessionid } = useParams();
   const { GetRoomToken } = useTwilioData();
-  const [twiliotoken, setTwilioToken] = useState(null);
+  const [twiliotoken, setTwilioToken] = useState("");
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [isvideoon, setIsVideoOn] = useState(true);
   const [isaudioon, setIsAudioOn] = useState(true);
   const [isactivity, setIsActivity] = useState(false);
-  const [activity, setActivity] = useState(null);
+  const [activityname, setActivityName] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messagetext, setMessageText] = useState("");
-
-  //Ref
-  const activitybtn = useRef(null);
+  const [bottomact, setBottomAct] = useState(false);
 
   const socket = io.connect("https://socket.fahm-technologies.com");
 
@@ -34,22 +32,32 @@ const Classroom = () => {
     if (auth && typeof auth.id !== "undefined") {
       const response = await GetRoomToken(auth.token, sessionid);
       setTwilioToken(response.authToken);
-      const joindata = { userid: auth.userid, roomname: sessionid };
-      socket.emit("joinRoom", joindata);
+      const joindata = { userid: auth.id, roomname: sessionid };
+      socket.emit("joinroom", joindata);
     }
   }, [auth]);
 
   useEffect(() => {
-    // console.log("socket", socket);
-    // setActivity(actname);
-    // setIsActivity(true);
+    console.log("activityname", activityname);
+  }, [activityname]);
+
+  useEffect(() => {
+    let activname = activityname;
     socket.on("activity", (data) => {
-      if (data.activity !== activity && data.activity !== "startcall") {
-        setActivity(data.activity);
+      if (
+        data.activity !== activityname &&
+        data.activity !== "startcall" &&
+        data.activity !== "endcall"
+      ) {
+        debugger;
+        window.localStorage.setItem("activity", data.activity.toString());
+        setActivityName(data.activity.toString());
         setIsActivity(true);
-        activitybtn.current.click();
+        setBottomAct(false);
       } else {
-        setActivity(null);
+        debugger;
+        setActivityName(null);
+        window.localStorage.removeItem("activity");
         setIsActivity(false);
       }
     });
@@ -60,45 +68,69 @@ const Classroom = () => {
       setMessages(messa);
       setMessageText("");
     });
+
+    socket.on("joinroom", (data) => {
+      debugger;
+      if (window.localStorage.getItem("activity")) {
+        StartCurrentActivity();
+      }
+    });
   }, [socket]);
 
-  useEffect(() => {
-    const participantConnected = (participant) => {
-      setParticipants((prevParticipants) => [...prevParticipants, participant]);
-    };
-    const participantDisconnected = (participant) => {
-      setParticipants((prevParticipants) =>
-        prevParticipants.filter((p) => p !== participant)
-      );
-    };
-
-    Video.connect(twiliotoken, {
-      name: sessionid,
-    }).then((room) => {
-      setRoom(room);
-      room.on("participantConnected", participantConnected);
-      room.on("participantDisconnected", participantDisconnected);
-      room.participants.forEach(participantConnected);
+  async function StartCurrentActivity() {
+    socket.emit("activity", {
+      activity: window.localStorage.getItem("activity"),
+      roomname: sessionid,
     });
-    return () => {
-      setRoom((currentRoom) => {
-        if (currentRoom && currentRoom.localParticipant.state === "connected") {
-          currentRoom.localParticipant.tracks.forEach(function (
-            trackPublication
-          ) {
-            trackPublication.track.stop();
-          });
-          currentRoom.disconnect();
-          return null;
-        } else {
-          return currentRoom;
-        }
+  }
+
+  useEffect(() => {
+    if (twiliotoken && twiliotoken !== "") {
+      const participantConnected = (participant) => {
+        setParticipants((prevParticipants) => [
+          ...prevParticipants,
+          participant,
+        ]);
+      };
+      const participantDisconnected = (participant) => {
+        setParticipants((prevParticipants) =>
+          prevParticipants.filter((p) => p !== participant)
+        );
+      };
+
+      Video.connect(twiliotoken, {
+        name: sessionid,
+      }).then((room) => {
+        setRoom(room);
+        room.on("participantConnected", participantConnected);
+        room.on("participantDisconnected", participantDisconnected);
+        room.participants.forEach(participantConnected);
       });
-    };
+      return () => {
+        setRoom((currentRoom) => {
+          if (
+            currentRoom &&
+            currentRoom.localParticipant.state === "connected"
+          ) {
+            currentRoom.localParticipant.tracks.forEach(function (
+              trackPublication
+            ) {
+              trackPublication.track.stop();
+            });
+            currentRoom.disconnect();
+            return null;
+          } else {
+            return currentRoom;
+          }
+        });
+      };
+    }
   }, [sessionid, twiliotoken]);
 
   async function EndCall() {
-    setTwilioToken(null);
+    socket.emit("activity", { activity: "endcall", roomname: sessionid });
+    window.localStorage.removeItem("activity");
+    setTwilioToken("");
     window.location.href = "/dashboard";
   }
 
@@ -299,22 +331,22 @@ const Classroom = () => {
           )}
           <Link
             to=""
-            className="techOptIcon"
+            className={bottomact ? "techOptIcon active" : "techOptIcon"}
             style={{ cursor: "pointer" }}
-            ref={activitybtn}
+            onClick={(e) => setBottomAct(!bottomact)}
           ></Link>
         </div>
 
-        <div className="techOptBox">
+        <div className={bottomact ? "techOptBox active" : "techOptBox"}>
           <h3>Class Exercise </h3>
           <div className="classEx">
             <ul>
-              <li>
+              {/* <li>
                 <a href="#">
                   <div className="classExBox shareBox"></div>
                   <h5>Share Screen</h5>
                 </a>
-              </li>
+              </li> */}
               <li>
                 <Link
                   to=""
@@ -331,12 +363,12 @@ const Classroom = () => {
                   <h5>Start Activity</h5>
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a href="#">
                   <div className="classExBox muteIcon"></div>
                   <h5>Mute All</h5>
                 </a>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

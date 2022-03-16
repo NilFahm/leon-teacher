@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
+  const [chatmessages, setChatMessages] = useState(null);
+
   async function HandleSendMessage() {
     let message = messagetext;
     SendMessage(message);
   }
+
+  useEffect(() => {
+    setChatMessages(messages);
+  }, [messages]);
 
   return (
     <div className="chatList">
@@ -13,14 +19,14 @@ const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
       </div>
 
       <ul className="">
-        {messages &&
-          messages.map((item, index) => {
+        {chatmessages &&
+          chatmessages.map((item, index) => {
             return (
               <>
-                {item.userid === auth.userid ? (
+                {item.userid === auth.id ? (
                   <>
-                    <li className="chatListBoxes" key={index}>
-                      <img src="/img/chatIcon1.png" className="chatListImg" />
+                    <li className="chatListBoxes chatListBoxes2" key={index}>
+                      <img src="/img/chatIcon2.png" className="chatListImg" />
                       <div className="chatListCont">
                         <h3>
                           <strong>{item.username}</strong>
@@ -33,8 +39,8 @@ const Chat = ({ messages, auth, SendMessage, messagetext, setMessageText }) => {
                   </>
                 ) : (
                   <>
-                    <li className="chatListBoxes chatListBoxes2" key={index}>
-                      <img src="/img/chatIcon2.png" className="chatListImg" />
+                    <li className="chatListBoxes" key={index}>
+                      <img src="/img/chatIcon1.png" className="chatListImg" />
                       <div className="chatListCont">
                         <h3>
                           <strong>{item.username}</strong>
