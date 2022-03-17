@@ -3,6 +3,8 @@
   height: 100%;
   width: 100%;
   cursor: url("https://mywhiteboardlabs.com/drive/leon/hand.png"), auto !important;
+  display: flex;
+  position: relative;
 }
 .div1 {
   z-index: 2;
@@ -61,15 +63,6 @@
   -webkit-filter: drop-shadow(5px 5px 5px lightgreen);
   filter: drop-shadow(5px 5px 5px lightgreen);
 }
-.ring {
-  z-index: 1;
-  position: absolute;
-  height: 30% !important;
-  width: auto !important;
-  left: 35%;
-  top: 15%;
-  animation: rotation 3s infinite linear;
-}
 
 .hidden {
   display: none;
@@ -104,14 +97,25 @@
   background: #015871;
 }
 
+.ring {
+  z-index: 1;
+  position: absolute;
+  height: 140px !important;
+  width: auto !important;
+  left: 37%;
+  top: 20%;
+  animation: rotation 3s infinite linear;
+}
+
 .ringimage {
   z-index: 100;
   position: absolute;
-  height: 70px !important;
+  height: 65px !important;
   width: auto;
   left: 43%;
-  top: 25%;
+  top: 26%;
 }
+
 .wave1 {
   animation: wave1 3s infinite alternate-reverse;
 }
