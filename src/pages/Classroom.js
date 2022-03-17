@@ -31,9 +31,9 @@ const Classroom = () => {
     window.localStorage.removeItem("messages");
   }, []);
 
-  // useEffect(() => {
-  //   navigate("/startcall/" + sessionid);
-  // }, [isactivity]);
+  useEffect(() => {
+    navigate("/startcall/" + sessionid);
+  }, [isactivity]);
 
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
