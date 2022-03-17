@@ -35,6 +35,10 @@ const Classroom = () => {
     navigate("/startcall/" + sessionid);
   }, [isactivity]);
 
+  useEffect(() => {
+    console.log("activityname", activityname);
+  }, [activityname]);
+
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
       const response = await GetRoomToken(auth.token, sessionid);
@@ -146,26 +150,28 @@ const Classroom = () => {
     if (on) {
       room.localParticipant.videoTracks.forEach(function (track, trackId) {
         track.track.disable();
+        setIsVideoOn(false);
       });
     } else {
       room.localParticipant.videoTracks.forEach(function (track, trackId) {
         track.track.enable();
+        setIsVideoOn(true);
       });
     }
-    setIsVideoOn(!on);
   }
 
   async function AudioOnOff(on) {
     if (on) {
       room.localParticipant.audioTracks.forEach(function (track, trackId) {
         track.track.disable();
+        setIsAudioOn(false);
       });
     } else {
       room.localParticipant.audioTracks.forEach(function (track, trackId) {
         track.track.enable();
+        setIsAudioOn(true);
       });
     }
-    setIsAudioOn(!on);
   }
 
   async function StartNewActivity(actname) {
@@ -220,7 +226,13 @@ const Classroom = () => {
                   >
                     <h4>Select Activity</h4>
                     <div className="starLink">
-                      <a href="teacher-className-matching.html">Matching</a>
+                      <Link
+                        to=""
+                        style={{ cursor: "pointer" }}
+                        onClick={(e) => StartNewActivity("matching")}
+                      >
+                        Matching
+                      </Link>
                       <a href="teacher-className-classification.html">
                         Classification
                       </a>
@@ -297,6 +309,7 @@ const Classroom = () => {
               SendMessage={SendMessage}
               messagetext={messagetext}
               setMessageText={setMessageText}
+              activityname={activityname}
             />
           ) : (
             <StartCall
@@ -405,7 +418,13 @@ const Classroom = () => {
             <div className="modal-body">
               <h4>Select Activity</h4>
               <div className="starLink">
-                <a href="teacher-className-matching.html">Matching</a>
+                <Link
+                  to=""
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => StartNewActivity("matching")}
+                >
+                  Matching
+                </Link>
                 <a href="teacher-className-classification.html">
                   Classification
                 </a>
@@ -420,11 +439,11 @@ const Classroom = () => {
                 </a>
                 <a href="teacher-className-count.html">Count the Numbers</a>
               </div>
-              <div className="btnBOx">
+              {/* <div className="btnBOx">
                 <a href="#" className="btn" data-dismiss="modal">
                   DONE
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

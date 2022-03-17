@@ -3,6 +3,7 @@ import LocalParticipant from "./LocalParticipant";
 import ParticipantNotConnected from "./ParticipantNotConnected";
 import Participant from "./Participant";
 import Chat from "./Chat";
+import Matching from "../activities/Matching";
 
 const StartActivity = ({
   participants,
@@ -16,6 +17,7 @@ const StartActivity = ({
   SendMessage,
   messagetext,
   setMessageText,
+  activityname,
 }) => {
   return (
     <>
@@ -24,26 +26,36 @@ const StartActivity = ({
         <div className="topBg"></div>
         <div className="innerContain">
           <div className="frameLeft1 FL">
-            <div className="innHeader">
-              <h2> White board</h2>
+            <div className="innHeader" style={{ zIndex: "100" }}>
+              <h2>
+                {activityname && activityname === "whiteboard" && "White Board"}
+                {activityname && activityname === "matching" && "Matching"}
+              </h2>
             </div>
 
             <div className="viewImg1">
               <div
                 className="closeBox"
                 onClick={(e) => StartCallOnly()}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", zIndex: "100" }}
               ></div>
-              <div className="whiteBoardBox">
-                <iframe
-                  src={
-                    "https://whiteboard.fahm-technologies.com/?whiteboardid=67c215e2-f2f4-49da-9c18-2f0df7c6fe81"
-                  }
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                  }}
-                />
+              <div className="whiteBoardBox position-relative">
+                {activityname && activityname === "matching" && (
+                  <>
+                    <Matching />
+                  </>
+                )}{" "}
+                {activityname && activityname === "whiteboard" && (
+                  <iframe
+                    src={
+                      "https://whiteboard.fahm-technologies.com/?whiteboardid=67c215e2-f2f4-49da-9c18-2f0df7c6fe81"
+                    }
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                )}
               </div>
             </div>
 
