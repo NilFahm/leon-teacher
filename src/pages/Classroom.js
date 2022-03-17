@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTwilioData } from "../data/TwilioData";
@@ -31,6 +31,10 @@ const Classroom = () => {
     window.localStorage.removeItem("messages");
   }, []);
 
+  // useEffect(() => {
+  //   navigate("/startcall/" + sessionid);
+  // }, [isactivity]);
+
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
       const response = await GetRoomToken(auth.token, sessionid);
@@ -45,15 +49,14 @@ const Classroom = () => {
   }, [activityname]);
 
   useEffect(() => {
-    let activname = activityname;
     socket.on("activity", (data) => {
       if (
         data.activity !== activityname &&
         data.activity !== "startcall" &&
         data.activity !== "endcall"
       ) {
-        window.localStorage.setItem("activity", data.activity.toString());
-        setActivityName(data.activity.toString());
+        window.localStorage.setItem("activity", data.activity);
+        setActivityName(data.activity);
         setIsActivity(true);
         setBottomAct(false);
       } else {

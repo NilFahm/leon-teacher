@@ -9,7 +9,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
       <div className="container">
         <div className="innerContain innerContain2">
           <ul className="row">
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[0] ? (
                 <Participant
                   key={participants[0].sid}
@@ -19,7 +22,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
                 <ParticipantNotConnected />
               )}
             </li>
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[1] ? (
                 <Participant
                   key={participants[1].sid}
@@ -29,7 +35,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
                 <ParticipantNotConnected />
               )}
             </li>
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[2] ? (
                 <Participant
                   key={participants[2].sid}
@@ -39,7 +48,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
                 <ParticipantNotConnected />
               )}
             </li>
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[3] ? (
                 <Participant
                   key={participants[3].sid}
@@ -49,7 +61,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
                 <ParticipantNotConnected />
               )}
             </li>
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {room ? (
                 <LocalParticipant
                   key={room.localParticipant.sid}
@@ -61,7 +76,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
                 <ParticipantNotConnected />
               )}
             </li>
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[4] ? (
                 <Participant
                   key={participants[4].sid}
@@ -72,7 +90,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
               )}
             </li>
 
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[5] ? (
                 <Participant
                   key={participants[5].sid}
@@ -82,7 +103,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
                 <ParticipantNotConnected />
               )}
             </li>
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[6] ? (
                 <Participant
                   key={participants[6].sid}
@@ -92,7 +116,10 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
                 <ParticipantNotConnected />
               )}
             </li>
-            <li className="col-lg-4 col-md-4 col-sm-4">
+            <li
+              className="col-lg-4 col-md-4 col-sm-4"
+              style={{ height: "33%" }}
+            >
               {participants && participants.length > 0 && participants[7] ? (
                 <Participant
                   key={participants[7].sid}

@@ -8,12 +8,13 @@ const Participant = ({ participant }) => {
   const videoRef = useRef();
   const audioRef = useRef();
 
-  const trackpubsToTracks = (trackMap) =>
-    Array.from(trackMap.values())
-      .map((publication) => publication.track)
-      .filter((track) => track !== null);
-
   useEffect(() => {
+    debugger
+    const trackpubsToTracks = (trackMap) =>
+      Array.from(trackMap.values())
+        .map((publication) => publication.track)
+        .filter((track) => track !== null);
+
     const trackSubscribed = (track) => {
       if (track.kind === "video") {
         setVideoTracks((videoTracks) => [...videoTracks, track]);
@@ -51,33 +52,40 @@ const Participant = ({ participant }) => {
 
     participant.on("trackSubscribed", trackSubscribed);
     participant.on("trackUnsubscribed", trackUnsubscribed);
-    participant.on("trackEnabled", trackEnabled);
-    participant.on("trackDisabled", trackDisabled);
+    participant.on("trackEnabled", trackSubscribed);
+    participant.on("trackDisabled", trackUnsubscribed);
 
     return () => {
       setVideoTracks([]);
       setAudioTracks([]);
-      participant.removeAllListeners();
+      // participant.removeAllListeners();
     };
   }, [participant]);
 
   useEffect(() => {
     const videoTrack = videoTracks[0];
     if (videoTrack) {
+      setIsVideoOn(videoTrack.isEnabled);
       videoTrack.attach(videoRef.current);
       return () => {
         videoTrack.detach();
       };
+    } else {
+      setIsVideoOn(false);
     }
   }, [videoTracks]);
 
   useEffect(() => {
+    debugger;
     const audioTrack = audioTracks[0];
     if (audioTrack) {
+      setIsAudioOn(audioTrack.isEnabled);
       audioTrack.attach(audioRef.current);
       return () => {
         audioTrack.detach();
       };
+    } else {
+      setIsAudioOn(false);
     }
   }, [audioTracks]);
 
