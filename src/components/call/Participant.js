@@ -9,7 +9,7 @@ const Participant = ({ participant }) => {
   const audioRef = useRef();
 
   useEffect(() => {
-    debugger
+    debugger;
     const trackpubsToTracks = (trackMap) =>
       Array.from(trackMap.values())
         .map((publication) => publication.track)
@@ -31,21 +31,21 @@ const Participant = ({ participant }) => {
       }
     };
 
-    const trackEnabled = (track) => {
-      if (track.kind === "video") {
-        setIsVideoOn(true);
-      } else if (track.kind === "audio") {
-        setIsAudioOn(true);
-      }
-    };
+    // const trackEnabled = (track) => {
+    //   if (track.kind === "video") {
+    //     setIsVideoOn(true);
+    //   } else if (track.kind === "audio") {
+    //     setIsAudioOn(true);
+    //   }
+    // };
 
-    const trackDisabled = (track) => {
-      if (track.kind === "video") {
-        setIsVideoOn(false);
-      } else if (track.kind === "audio") {
-        setIsAudioOn(false);
-      }
-    };
+    // const trackDisabled = (track) => {
+    //   if (track.kind === "video") {
+    //     setIsVideoOn(false);
+    //   } else if (track.kind === "audio") {
+    //     setIsAudioOn(false);
+    //   }
+    // };
 
     setVideoTracks(trackpubsToTracks(participant.videoTracks));
     setAudioTracks(trackpubsToTracks(participant.audioTracks));
@@ -58,7 +58,7 @@ const Participant = ({ participant }) => {
     return () => {
       setVideoTracks([]);
       setAudioTracks([]);
-      // participant.removeAllListeners();
+      participant.removeAllListeners();
     };
   }, [participant]);
 
