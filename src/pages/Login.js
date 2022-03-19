@@ -8,6 +8,7 @@ const Login = () => {
   const { LoginUser } = useAuthData();
   const [auth, setAuthData] = useLocalStorage("auth", {});
   const [passwordtype, setPasswordType] = useState("password");
+  const [errormessage, setErrorMessage] = useState(null);
   const [isremember, setIsRemember] = useLocalStorage("rememberme", null);
   const [logindata, setLoginData] = useState({
     email: "",
@@ -25,8 +26,12 @@ const Login = () => {
 
   async function DoLogin() {
     const response = await LoginUser(logindata);
-    setAuthData(response);
-    navigate("/dashboard");
+    if (response) {
+      setAuthData(response);
+      navigate("/dashboard");
+    } else {
+      setErrorMessage("Invalid username or password");
+    }
   }
 
   return (
@@ -79,6 +84,7 @@ const Login = () => {
               {/* <span className="errorTxt">Enter correct password</span> */}
             </li>
             <li>
+              <span className="errorTxt">{errormessage}</span>
               <div className="rememberBox FL">
                 <label className="checkboxMain">
                   Remember me
@@ -95,11 +101,11 @@ const Login = () => {
                 </label>
               </div>
 
-              <div className="FR">
+              {/* <div className="FR">
                 <Link to={"/forgotpassword"} className="forgotBtn">
                   Forgot Password?
                 </Link>
-              </div>
+              </div> */}
               <div className="clear"></div>
             </li>
           </ul>

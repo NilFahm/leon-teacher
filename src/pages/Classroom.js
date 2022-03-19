@@ -394,7 +394,7 @@ const Classroom = () => {
           </div>
         </div>
 
-        <div className="subNameBox">
+        {/* <div className="subNameBox">
           <div className="homeLion2">
             <img src="/img/homeLion2.svg" />
           </div>
@@ -406,7 +406,7 @@ const Classroom = () => {
             </strong>
             <b>S1</b>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="modal startActivitypup" id="startActivitypup">

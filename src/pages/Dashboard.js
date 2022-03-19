@@ -124,7 +124,7 @@ const Dashboard = () => {
                   {scheduledata && (
                     <li>
                       <div className="dashSchBoxIn">
-                        <div className="dashSchTim"> 12:00 PM - 01:00 PM</div>
+                        {/* <div className="dashSchTim"> 12:00 PM - 01:00 PM</div> */}
                         <div className="dashLes">
                           {scheduledata.courseName} - {scheduledata.levelName}
                         </div>
