@@ -49,13 +49,14 @@ const Login = () => {
         <div className="loginLogo">
           <img src="/img/logo.svg" alt="" />
         </div>
-        {errormessage && (
-          <li>
-            <span className="errorTxt">{errormessage}</span>
-          </li>
-        )}
+
         <div>
           <ul>
+            {errormessage && (
+              <li>
+                <span className="errorTxt">{errormessage}</span>
+              </li>
+            )}
             <li>
               <label className="loginTxt">
                 <input
