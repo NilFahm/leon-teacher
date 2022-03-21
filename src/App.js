@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { useLocalStorage } from "./utils/useLocalStorage";
 
 //Layouts
-import { Layouts } from "./data/layouts/Layouts";
+import { Layouts } from "./components/layouts/Layouts";
 
 //Pages
 import { Pages } from "./pages/Pages";
@@ -10,7 +10,7 @@ import { Pages } from "./pages/Pages";
 const PrivateRoute = ({ element }) => {
   const { PrivateLayout } = Layouts();
   const [auth] = useLocalStorage("auth", null);
-  if (typeof auth.id === "undefined") {
+  if (!auth || typeof auth.id === "undefined") {
     return <Navigate to="/login" />;
   } else {
     return <PrivateLayout element={element} />;

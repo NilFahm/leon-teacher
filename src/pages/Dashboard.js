@@ -1,21 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useLocalStorage } from "../utils/useLocalStorage";
-import { useScheduleData } from "../data/ScheduleData";
+import { useCommon } from "../utils/useCommon";
+import { Config } from "../data/Config";
+import axios from "axios";
 
 const Dashboard = () => {
   const [auth, setAuthData] = useLocalStorage("auth", {});
-  const { TeacherSchedule } = useScheduleData();
+  const { HideCircularProgress, ShowCircularProgress } = useCommon();
+
   const navigate = useNavigate();
 
   const [scheduledata, setScheduleData] = useState(null);
+  const [errormessage, setErrorMessage] = useState(null);
 
   useEffect(async () => {
-    const response = await TeacherSchedule(auth.token);
-    if (response) {
-      console.log(response[0]);
-      setScheduleData(response[0]);
-    }
+    ShowCircularProgress();
+    await axios
+      .post(
+        Config.baseUrl + "/teachers/schedule",
+        {},
+        { headers: { Authorization: `bearer ${auth.token}` } }
+      )
+      .then((response) => {
+        setScheduleData(response.data[0]);
+        HideCircularProgress();
+      })
+      .catch((error) => {
+        setErrorMessage(error.response.data);
+        HideCircularProgress();
+      });
   }, [auth]);
 
   async function HandleLogout() {

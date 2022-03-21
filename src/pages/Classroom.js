@@ -5,15 +5,18 @@ import { useTwilioData } from "../data/TwilioData";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import StartCall from "../components/call/StartCall";
 import StartActivity from "../components/call/StartActivity";
+import axios from "axios";
+import { useCommon } from "../utils/useCommon";
+import { Config } from "../data/Config";
 import io from "socket.io-client";
 
 import Video from "twilio-video";
 
 const Classroom = () => {
-  const [auth] = useLocalStorage("auth", {});
+  const [auth, setAuth] = useLocalStorage("auth", {});
   const navigate = useNavigate();
   const { sessionid } = useParams();
-  const { GetRoomToken } = useTwilioData();
+  const { HideCircularProgress, ShowCircularProgress } = useCommon();
   const [twiliotoken, setTwilioToken] = useState("");
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
@@ -41,10 +44,26 @@ const Classroom = () => {
 
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
-      const response = await GetRoomToken(auth.token, sessionid);
-      setTwilioToken(response.authToken);
-      const joindata = { userid: auth.id, roomname: sessionid };
-      socket.emit("joinroom", joindata);
+      ShowCircularProgress();
+      await axios
+        .post(
+          Config.baseUrl + "/teachers/get-room-token",
+          { roomid: sessionid },
+          { headers: { Authorization: `bearer ${auth.token}` } }
+        )
+        .then((response) => {
+          setTwilioToken(response.data);
+          HideCircularProgress();
+        })
+        .catch((error) => {
+          HideCircularProgress();
+          setAuth(null);
+          navigate("/login");
+        });
+      // const response = await GetRoomToken(auth.token, sessionid);
+      // setTwilioToken(response.authToken);
+      // const joindata = { userid: auth.id, roomname: sessionid };
+      // socket.emit("joinroom", joindata);
     }
   }, [auth]);
 

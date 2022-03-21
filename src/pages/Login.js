@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import { useAuthData } from "../data/AuthData";
+import { Config } from "../data/Config";
+import { useCommon } from "../utils/useCommon";
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { ShowCircularProgress, HideCircularProgress } = useCommon();
   const { LoginUser } = useAuthData();
   const [auth, setAuthData] = useLocalStorage("auth", {});
   const [passwordtype, setPasswordType] = useState("password");
@@ -25,13 +29,18 @@ const Login = () => {
   }, [isremember]);
 
   async function DoLogin() {
-    const response = await LoginUser(logindata);
-    if (response) {
-      setAuthData(response);
-      navigate("/dashboard");
-    } else {
-      setErrorMessage("Invalid username or password");
-    }
+    ShowCircularProgress();
+    await axios
+      .post(Config.baseUrl + "/teachers/login", logindata)
+      .then((response) => {
+        setAuthData(response.data);
+        navigate("/dashboard");
+        HideCircularProgress();
+      })
+      .catch((error) => {
+        setErrorMessage(error.response.data);
+        HideCircularProgress();
+      });
   }
 
   return (
@@ -40,7 +49,11 @@ const Login = () => {
         <div className="loginLogo">
           <img src="/img/logo.svg" alt="" />
         </div>
-
+        {errormessage && (
+          <li>
+            <span className="errorTxt">{errormessage}</span>
+          </li>
+        )}
         <div>
           <ul>
             <li>
@@ -52,6 +65,10 @@ const Login = () => {
                   onChange={(e) =>
                     setLoginData({ ...logindata, email: e.target.value })
                   }
+                  readOnly={true}
+                  onFocus={(e) => (e.target.readOnly = false)}
+                  type="email"
+                  required={true}
                 />
                 <span>User Name</span>
               </label>
@@ -67,6 +84,9 @@ const Login = () => {
                   onChange={(e) =>
                     setLoginData({ ...logindata, password: e.target.value })
                   }
+                  readOnly={true}
+                  onFocus={(e) => (e.target.readOnly = false)}
+                  required={true}
                 />
                 <span>Password</span>
                 <Link
@@ -84,7 +104,6 @@ const Login = () => {
               {/* <span className="errorTxt">Enter correct password</span> */}
             </li>
             <li>
-              <span className="errorTxt">{errormessage}</span>
               <div className="rememberBox FL">
                 <label className="checkboxMain">
                   Remember me
