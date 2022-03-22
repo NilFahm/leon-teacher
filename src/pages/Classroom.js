@@ -74,6 +74,7 @@ const Classroom = () => {
 
   useEffect(() => {
     socket.on("activity", (data) => {
+      debugger
       if (
         data.activity !== activityname &&
         data.activity !== "startcall" &&
@@ -195,6 +196,7 @@ const Classroom = () => {
   }
 
   async function StartNewActivity(actname) {
+    debugger
     socket.emit("activity", { activity: actname, roomname: sessionid });
   }
 

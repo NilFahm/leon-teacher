@@ -48,7 +48,7 @@ const StartActivity = ({
                 {activityname && activityname === "whiteboard" && (
                   <iframe
                     src={
-                      "https://whiteboard.fahm-technologies.com/?whiteboardid=67c215e2-f2f4-49da-9c18-2f0df7c6fe81?username=" +
+                      "https://whiteboard.fahm-technologies.com/?whiteboardid=67c215e2-f2f4-49da-9c18-2f0df7c6fe81&username=" +
                       auth.name
                     }
                     style={{
