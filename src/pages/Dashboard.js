@@ -23,7 +23,7 @@ const Dashboard = () => {
         { headers: { Authorization: `bearer ${auth.token}` } }
       )
       .then((response) => {
-        setScheduleData(response.data[0]);
+        setScheduleData(response.data);
         HideCircularProgress();
       })
       .catch((error) => {
@@ -135,23 +135,66 @@ const Dashboard = () => {
                       <div className="dashStatus"> Completed</div>
                     </div>
                   </li>
-                  {scheduledata && (
-                    <li>
-                      <div className="dashSchBoxIn">
-                        {/* <div className="dashSchTim"> 12:00 PM - 01:00 PM</div> */}
-                        <div className="dashLes">
-                          {scheduledata.courseName} - {scheduledata.levelName}
-                        </div>
-                        <div
-                          className="dashStatus"
-                          style={{ cursor: "pointer" }}
-                          onClick={(e) => StartClass(scheduledata.roomId)}
-                        >
-                          Start Class
-                        </div>
-                      </div>
-                    </li>
-                  )}
+                  {scheduledata &&
+                    scheduledata.map((scheduledata, index) => {
+                      return (
+                        <li key={index}>
+                          <div className="dashSchBoxIn">
+                            <div className="dashSchTim">
+                              {(new Date(
+                                scheduledata.scheduledStart
+                              ).getHours() > 12
+                                ? 24 -
+                                  new Date(
+                                    scheduledata.scheduledStart
+                                  ).getHours()
+                                : new Date(
+                                    scheduledata.scheduledStart
+                                  ).getHours()) +
+                                ":" +
+                                new Date(
+                                  scheduledata.scheduledStart
+                                ).getMinutes() +
+                                " " +
+                                (new Date(
+                                  scheduledata.scheduledStart
+                                ).getHours() > 12
+                                  ? "PM"
+                                  : "AM")}{" "}
+                              -{" "}
+                              {(new Date(scheduledata.scheduledEnd).getHours() >
+                              12
+                                ? 24 -
+                                  new Date(scheduledata.scheduledEnd).getHours()
+                                : new Date(
+                                    scheduledata.scheduledEnd
+                                  ).getHours()) +
+                                ":" +
+                                new Date(
+                                  scheduledata.scheduledEnd
+                                ).getMinutes() +
+                                " " +
+                                (new Date(
+                                  scheduledata.scheduledEnd
+                                ).getHours() > 12
+                                  ? "PM"
+                                  : "AM")}
+                            </div>
+                            <div className="dashLes">
+                              {scheduledata.courseName} -{" "}
+                              {scheduledata.levelName}
+                            </div>
+                            <div
+                              className="dashStatus"
+                              style={{ cursor: "pointer" }}
+                              onClick={(e) => StartClass(scheduledata.roomId)}
+                            >
+                              Start Class
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
                   <li className="nextActive">
                     <div className="dashSchBoxIn">
                       <div className="dashSchTim"> 03:00 PM - 04:00 PM</div>
