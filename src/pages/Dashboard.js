@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import { useCommon } from "../utils/useCommon";
 import { Config } from "../data/Config";
 import axios from "axios";
+import ScheduleCard from "../components/Dashboard/ScheduleCard";
 
 const Dashboard = () => {
   const [auth, setAuthData] = useLocalStorage("auth", {});
   const { HideCircularProgress, ShowCircularProgress } = useCommon();
-
-  const navigate = useNavigate();
 
   const [scheduledata, setScheduleData] = useState(null);
   const [errormessage, setErrorMessage] = useState(null);
@@ -23,6 +22,7 @@ const Dashboard = () => {
         { headers: { Authorization: `bearer ${auth.token}` } }
       )
       .then((response) => {
+        console.log(response.data);
         setScheduleData(response.data);
         HideCircularProgress();
       })
@@ -37,10 +37,6 @@ const Dashboard = () => {
     window.location.href = "/";
   }
 
-  async function StartClass(sessionid) {
-    return navigate("/startcall/" + sessionid);
-  }
-
   return (
     <div className="teachMainBox">
       <div className="wapper overHidden">
@@ -51,7 +47,6 @@ const Dashboard = () => {
                 <img src="/img/logo2.svg" />
               </a>
             </div>
-
             <div className="dashLinks">
               <div className="dashclickLayer"></div>
               <a href="#" className="iconDash active">
@@ -100,9 +95,9 @@ const Dashboard = () => {
                     <a className="dropdown-item" href="#">
                       My Profile
                     </a>
-                    <a className="dropdown-item" href="#">
+                    {/* <a className="dropdown-item" href="#">
                       Settings
-                    </a>
+                    </a> */}
                     <Link
                       className="dropdown-item"
                       to=""
@@ -128,74 +123,18 @@ const Dashboard = () => {
             <div className="scroll-pane">
               <div className="dashSchBox">
                 <ul>
-                  <li className="active">
+                  {/* <li className="active">
                     <div className="dashSchBoxIn">
                       <div className="dashSchTim"> 10:00 AM - 11:00 AM</div>
                       <div className="dashLes"> Leon English - Basic</div>
                       <div className="dashStatus"> Completed</div>
                     </div>
-                  </li>
+                  </li> */}
                   {scheduledata &&
-                    scheduledata.map((scheduledata, index) => {
-                      return (
-                        <li key={index}>
-                          <div className="dashSchBoxIn">
-                            <div className="dashSchTim">
-                              {(new Date(
-                                scheduledata.scheduledStart
-                              ).getHours() > 12
-                                ? 24 -
-                                  new Date(
-                                    scheduledata.scheduledStart
-                                  ).getHours()
-                                : new Date(
-                                    scheduledata.scheduledStart
-                                  ).getHours()) +
-                                ":" +
-                                new Date(
-                                  scheduledata.scheduledStart
-                                ).getMinutes() +
-                                " " +
-                                (new Date(
-                                  scheduledata.scheduledStart
-                                ).getHours() > 12
-                                  ? "PM"
-                                  : "AM")}{" "}
-                              -{" "}
-                              {(new Date(scheduledata.scheduledEnd).getHours() >
-                              12
-                                ? 24 -
-                                  new Date(scheduledata.scheduledEnd).getHours()
-                                : new Date(
-                                    scheduledata.scheduledEnd
-                                  ).getHours()) +
-                                ":" +
-                                new Date(
-                                  scheduledata.scheduledEnd
-                                ).getMinutes() +
-                                " " +
-                                (new Date(
-                                  scheduledata.scheduledEnd
-                                ).getHours() > 12
-                                  ? "PM"
-                                  : "AM")}
-                            </div>
-                            <div className="dashLes">
-                              {scheduledata.courseName} -{" "}
-                              {scheduledata.levelName}
-                            </div>
-                            <div
-                              className="dashStatus"
-                              style={{ cursor: "pointer" }}
-                              onClick={(e) => StartClass(scheduledata.roomId)}
-                            >
-                              Start Class
-                            </div>
-                          </div>
-                        </li>
-                      );
+                    scheduledata.map((item, index) => {
+                      return <ScheduleCard scheduledata={item} key={index} />;
                     })}
-                  <li className="nextActive">
+                  {/* <li className="nextActive">
                     <div className="dashSchBoxIn">
                       <div className="dashSchTim"> 03:00 PM - 04:00 PM</div>
                       <div className="dashLes"> Maths - III</div>
@@ -204,7 +143,7 @@ const Dashboard = () => {
                         Start in <span>04:20:60</span>
                       </div>
                     </div>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>
