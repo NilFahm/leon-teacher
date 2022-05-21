@@ -11,6 +11,7 @@ import { Config } from "../data/Config";
 import io from "socket.io-client";
 
 import Video from "twilio-video";
+import RTime from "../components/satrtactivity/RTime";
 
 const Classroom = () => {
   const [auth, setAuth] = useLocalStorage("auth", {});
@@ -18,15 +19,20 @@ const Classroom = () => {
   const { sessionid } = useParams();
   const { HideCircularProgress, ShowCircularProgress } = useCommon();
   const [twiliotoken, setTwilioToken] = useState("");
+  const [getactivitydetails, setGetactivitydetails] = useState(null);
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [isvideoon, setIsVideoOn] = useState(true);
   const [isaudioon, setIsAudioOn] = useState(true);
   const [isactivity, setIsActivity] = useState(false);
   const [activityname, setActivityName] = useState(null);
+  const [scheduledetails, setscheduledetails] = useState(null);
+  const [activitydata, setActivitydata] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messagetext, setMessageText] = useState("");
   const [bottomact, setBottomAct] = useState(false);
+  const [showresult, setShowresult] = useState(false);
+  const [details, setdetails] = useState(null);
 
   const socket = io.connect("https://socket.fahm-technologies.com");
 
@@ -44,16 +50,18 @@ const Classroom = () => {
 
   useEffect(async () => {
     if (auth && typeof auth.id !== "undefined") {
+      const joindata = { userid: auth.id, roomname: sessionid };
+      socket.emit("joinroom", joindata);
+
       ShowCircularProgress();
       await axios
         .post(
-          Config.baseUrl + "/teachers/get-room-token",
+          Config.baseUrl + "/tutors/get-room-token",
           { roomid: sessionid },
           { headers: { Authorization: `bearer ${auth.token}` } }
         )
         .then((response) => {
-          debugger
-          setTwilioToken(response.data.authToken);
+          // setTwilioToken(response.data.authToken);
           HideCircularProgress();
         })
         .catch((error) => {
@@ -61,10 +69,47 @@ const Classroom = () => {
           setAuth(null);
           navigate("/login");
         });
-      // const response = await GetRoomToken(auth.token, sessionid);
-      // setTwilioToken(response.authToken);
-      // const joindata = { userid: auth.id, roomname: sessionid };
-      // socket.emit("joinroom", joindata);
+      await axios
+        .get(
+          Config.baseUrl +
+            "/tutors/schedule/sessionId/activities?sessionId=" +
+            sessionid,
+          { headers: { Authorization: `bearer ${auth.token}` } }
+        )
+        .then((response) => {
+          // setTwilioToken(response.data.authToken);
+          setGetactivitydetails(response.data);
+          console.log(response.data);
+          HideCircularProgress();
+        })
+        .catch((error) => {
+          HideCircularProgress();
+          setAuth(null);
+          navigate("/login");
+        });
+    }
+  }, [auth]);
+
+  useEffect(async () => {
+    if (auth && typeof auth.id !== "undefined") {
+      ShowCircularProgress();
+      await axios
+
+        .get(
+          Config.baseUrl + "/tutors/schedule/sessionId?sessionId=" + sessionid,
+          { headers: { Authorization: `bearer ${auth.token}` } }
+        )
+        .then((respone) => {
+          // setTwilioToken(response.data.authToken);
+          console.log(respone.data);
+          setscheduledetails(respone.data);
+          HideCircularProgress();
+        })
+        .catch((error) => {
+          HideCircularProgress();
+          setAuth(null);
+          navigate("/login");
+        });
     }
   }, [auth]);
 
@@ -74,20 +119,28 @@ const Classroom = () => {
 
   useEffect(() => {
     socket.on("activity", (data) => {
-      debugger
-      if (
-        data.activity !== activityname &&
-        data.activity !== "startcall" &&
-        data.activity !== "endcall"
-      ) {
-        window.localStorage.setItem("activity", data.activity);
-        setActivityName(data.activity);
-        setIsActivity(true);
-        setBottomAct(false);
+      console.log("activityname", activityname);
+      console.log(" data.activity", data.activity);
+      if (data.activity != activityname) {
+        if (
+          data.activity != activityname &&
+          data.activity !== "startcall" &&
+          data.activity !== "endcall"
+        ) {
+          window.localStorage.setItem("activity", data.activity, data.details);
+          setActivityName(data.activity);
+          var detailss = data.details;
+          setActivitydata(detailss);
+          console.log(data.activity);
+          setIsActivity(true);
+          setBottomAct(false);
+        } else {
+          setActivityName(data.activity);
+          window.localStorage.removeItem("activity");
+          setIsActivity(false);
+        }
       } else {
-        setActivityName(null);
-        window.localStorage.removeItem("activity");
-        setIsActivity(false);
+        setBottomAct(false);
       }
     });
 
@@ -195,9 +248,29 @@ const Classroom = () => {
     }
   }
 
-  async function StartNewActivity(actname) {
-    debugger
-    socket.emit("activity", { activity: actname, roomname: sessionid });
+  async function StartNewActivity(actname, details) {
+    debugger;
+    socket.emit("activity", {
+      activity: actname,
+      roomname: sessionid,
+      details: details,
+    });
+    if (actname !== null) {
+      setShowresult(false);
+    }
+  }
+
+  function Showdata(data) {
+    debugger;
+    if (data !== null) {
+      if (showresult == false) {
+        setShowresult(true);
+        setdetails(data);
+      } else {
+        setShowresult(false);
+        // setdetails(data)
+      }
+    }
   }
 
   async function StartCallOnly() {
@@ -220,8 +293,26 @@ const Classroom = () => {
             <div className="topLeft">
               <div className="timerBox timerBox2 timerBox3">
                 <div className="timerTxt">
-                  Attendance <strong>8/8</strong>
+                  Attendance
+                  <strong>
+                    {" "}
+                    2/{scheduledetails && scheduledetails.students.length}
+                  </strong>
                 </div>
+              </div>
+            </div>
+            <div class="subNameBox">
+              <div class="homeLion2">
+                <img src="/img/homeLion2.svg" />
+              </div>
+              <span>Smart Active</span>
+              <div class="SubName">
+                <strong>
+                  LEON {scheduledetails && scheduledetails.sessionName}
+                  <br />
+                  L1 Session 02
+                </strong>
+                <b>S1</b>
               </div>
             </div>
 
@@ -246,31 +337,10 @@ const Classroom = () => {
                     className="dropdown-menu  dropdown-menu-center"
                     aria-labelledby="dropdownMenuButton"
                   >
-                    <h4>Select Activity</h4>
-                    <div className="starLink">
-                      <Link
-                        to=""
-                        style={{ cursor: "pointer" }}
-                        onClick={(e) => StartNewActivity("matching")}
-                      >
-                        Matching
-                      </Link>
-                      <a href="teacher-className-classification.html">
-                        Classification
-                      </a>
-                      <a href="teacher-className-discrimination.html">
-                        Discrimination
-                      </a>
-                      <a href="teacher-className-spelling.html">
-                        Correct the Spelling
-                      </a>
-                      <a href="teacher-className-identify.html">
-                        Identify the Object
-                      </a>
-                      <a href="teacher-className-count.html">
-                        Count the Numbers
-                      </a>
-                    </div>
+                    {/* <h4>Select Activity</h4>
+                    {getactivitydetails && getactivitydetails.map((item, index) => {
+                      return <StartActivity getactivitydetails={item} key={index} />
+                    })} */}
                   </div>
                 </div>
               </div>
@@ -284,7 +354,7 @@ const Classroom = () => {
                 >
                   <img src="/img/recIcon.svg" />
                 </a>
-                <div className="recTiming"> 00:17:46 </div>
+                <RTime schedule={scheduledetails} />
                 <a href="#" className="wifiBtn">
                   <img src="/img/wifIcon.svg" />
                 </a>
@@ -322,7 +392,9 @@ const Classroom = () => {
           {isactivity ? (
             <StartActivity
               participants={participants}
+              sessionid={sessionid}
               room={room}
+              StartNewActivity={StartNewActivity}
               isaudioon={isaudioon}
               isvideoon={isvideoon}
               StartCallOnly={StartCallOnly}
@@ -332,6 +404,10 @@ const Classroom = () => {
               messagetext={messagetext}
               setMessageText={setMessageText}
               activityname={activityname}
+              activitydata={activitydata}
+              Showdata={Showdata}
+              showresult={showresult}
+              details={details}
             />
           ) : (
             <StartCall
@@ -380,7 +456,20 @@ const Classroom = () => {
           ></Link>
         </div>
 
-        <div className={bottomact ? "techOptBox active" : "techOptBox"}>
+        <div
+          className={bottomact ? "techOptBox active" : "techOptBox"}
+          style={{ height: "40%" }}
+        >
+          <div className={"model-body"}>
+            <button
+              type="button"
+              className="close"
+              data-dismiss="techOptBox active"
+              onClick={(e) => setBottomAct(!bottomact)}
+            >
+              <h3> &times;</h3>
+            </button>
+          </div>
           <h3>Class Exercise </h3>
           <div className="classEx">
             <ul>
@@ -440,26 +529,38 @@ const Classroom = () => {
             <div className="modal-body">
               <h4>Select Activity</h4>
               <div className="starLink">
+                {getactivitydetails &&
+                  getactivitydetails.map((details) => {
+                    return (
+                      <Link
+                        key={details.activityid}
+                        to=""
+                        style={{ cursor: "pointer" }}
+                        data-dismiss="modal"
+                        onClick={(e) =>
+                          StartNewActivity(details.activityid, details)
+                        }
+                      >
+                        {details.activityid}. {details.activityname}
+                      </Link>
+                    );
+                  })}
                 <Link
                   to=""
-                  style={{ cursor: "pointer" }}
-                  onClick={(e) => StartNewActivity("matching")}
+                  style={{ cursor: "pointer", height: "10%" }}
+                  data-dismiss="modal"
+                  onClick={(e) => StartNewActivity(5)}
                 >
-                  Matching
+                  5. Quantity
                 </Link>
-                <a href="teacher-className-classification.html">
-                  Classification
-                </a>
-                <a href="teacher-className-discrimination.html">
-                  Discrimination
-                </a>
-                <a href="teacher-className-spelling.html">
-                  Correct the Spelling
-                </a>
-                <a href="teacher-className-identify.html">
-                  Identify the Object
-                </a>
-                <a href="teacher-className-count.html">Count the Numbers</a>
+                <Link
+                  to=""
+                  style={{ cursor: "pointer", height: "10%" }}
+                  data-dismiss="modal"
+                  onClick={(e) => StartNewActivity(6)}
+                >
+                  6. Mapping-Ability
+                </Link>
               </div>
               {/* <div className="btnBOx">
                 <a href="#" className="btn" data-dismiss="modal">

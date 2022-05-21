@@ -21,20 +21,32 @@ const Login = () => {
 
   useEffect(() => {
     if (isremember && isremember !== null) {
+      var jso = atob(isremember)
+      var parse = JSON.parse(jso)
       setLoginData({
-        Email: isremember.Email,
-        Password: isremember.Password,
+        Email: parse.Email,
+        Password: parse.Password,
       });
     }
   }, [isremember]);
 
+  function Remember() {
+    debugger
+    var data = JSON.stringify(logindata)
+    var bto = btoa(data.toString())
+    setIsRemember(bto)
+   
+  }
+
+
   async function DoLogin() {
     ShowCircularProgress();
     await axios
-      .post(Config.baseUrl + "/teachers/login", logindata)
+      .post(Config.baseUrl + "/tutors/login", logindata)
       .then((response) => {
         setAuthData(response.data);
         navigate("/dashboard");
+        console.log(response.data)
         HideCircularProgress();
       })
       .catch((error) => {
@@ -63,9 +75,22 @@ const Login = () => {
                   placeholder=" "
                   autoComplete="Off"
                   value={logindata && logindata.email}
+                  // onKeyPress={(e) =>{
+                  //   if(e.key === 'enter'){
+                  //     console.log('enter press here! ')
+                  //     setLoginData({ ...logindata, email: e.target.value })
+                  //   }
+                  //   }
+                    
+                  // }
                   onChange={(e) =>
                     setLoginData({ ...logindata, email: e.target.value })
                   }
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                     DoLogin()
+                    }
+                  }}
                   readOnly={true}
                   onFocus={(e) => (e.target.readOnly = false)}
                   type="email"
@@ -85,6 +110,11 @@ const Login = () => {
                   onChange={(e) =>
                     setLoginData({ ...logindata, password: e.target.value })
                   }
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                     DoLogin()
+                    }
+                  }}
                   readOnly={true}
                   onFocus={(e) => (e.target.readOnly = false)}
                   required={true}
@@ -108,12 +138,21 @@ const Login = () => {
               <div className="rememberBox FL">
                 <label className="checkboxMain">
                   Remember me
-                  <input
+                  {/* <input
                     type="checkbox"
                     checked={isremember}
                     onChange={(e) => {
                       e.target.checked
                         ? setIsRemember(logindata)
+                        : setIsRemember(null);
+                    }}
+                  /> */}
+                  <input
+                    type="checkbox"
+                    checked={isremember && isremember !== null}
+                    onChange={(e) => {
+                      e.target.checked
+                        ? Remember()
                         : setIsRemember(null);
                     }}
                   />

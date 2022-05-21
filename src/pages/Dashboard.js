@@ -5,25 +5,30 @@ import { useCommon } from "../utils/useCommon";
 import { Config } from "../data/Config";
 import axios from "axios";
 import ScheduleCard from "../components/Dashboard/ScheduleCard";
+import DashboardSummary from "../components/Dashboard/DashboardSummary";
+import DashboardToppers from "../components/Dashboard/DashboardToppers";
 
 const Dashboard = () => {
   const [auth, setAuthData] = useLocalStorage("auth", {});
   const { HideCircularProgress, ShowCircularProgress } = useCommon();
 
   const [scheduledata, setScheduleData] = useState(null);
+  const [summarydata, SetSummaryData] = useState(null);
+  const [toppersdata, Settoppersdata] = useState(null);
   const [errormessage, setErrorMessage] = useState(null);
 
   useEffect(async () => {
     ShowCircularProgress();
     await axios
-      .post(
-        Config.baseUrl + "/teachers/schedule",
-        {},
+      .get(
+        Config.baseUrl + "/tutors/schedule",
         { headers: { Authorization: `bearer ${auth.token}` } }
       )
       .then((response) => {
         console.log(response.data);
-        setScheduleData(response.data);
+        setScheduleData(response.data.schedule);
+        Settoppersdata(response.data.toppers)
+        SetSummaryData(response.data.summary);
         HideCircularProgress();
       })
       .catch((error) => {
@@ -130,7 +135,7 @@ const Dashboard = () => {
                       <div className="dashStatus"> Completed</div>
                     </div>
                   </li> */}
-                  {scheduledata &&
+                  {scheduledata && scheduledata.length > 0 &&
                     scheduledata.map((item, index) => {
                       return <ScheduleCard scheduledata={item} key={index} />;
                     })}
@@ -167,100 +172,15 @@ const Dashboard = () => {
             </div>
 
             <div></div>
-            <div className="boxBlue">
-              <ul>
-                <li>
-                  <span className="blueBoxSm">My Students</span>
-                  <div className="blueBoxHead">
-                    <span>
-                      <img src="/img/blueIcon1.svg" />
-                    </span>
-                    480
-                  </div>
-                </li>
-                <li className="boxMid">
-                  <span className="blueBoxSm">My Earnings</span>
-                  <div className="blueBoxHead">
-                    <span>
-                      <img src="/img/blueIcon2.svg" />
-                    </span>
-                    102K
-                  </div>
-                </li>
-                <li>
-                  <span className="blueBoxSm">My Sessions</span>
-                  <div className="blueBoxHead">
-                    <span>
-                      <img src="/img/blueIcon3.svg" />
-                    </span>
-                    170
-                  </div>
-                </li>
-                <div className="clear"></div>
-              </ul>
-            </div>
-
-            <div className="boxWhite">
-              <h6>My Classes</h6>
-              <ul>
-                <li>
-                  <div className="boxNo">84</div>
-                </li>
-                <li>
-                  <div className="boxNo">24</div>
-                  <span>English</span>
-                  <div className="clear"></div>
-                </li>
-                <li>
-                  <div className="boxNo">60</div>
-                  <span>Maths</span>
-                  <div className="clear"></div>
-                </li>
-              </ul>
-              <div className="clear"></div>
-            </div>
-
+            <DashboardSummary summarydata={summarydata}/>
             <div className="topClass">
               <h4>Toppers in Class</h4>
-
               <div className="topClassList">
                 <ul>
-                  <li>
-                    <div className="topClassBox">
-                      <div className="topImg">
-                        <img src="/img/topImg1.png" />
-                      </div>
-                      <div className="topTxt1">
-                        <strong>Jenifer Johan</strong>
-                        <span>ENGLISH LEON - Basic</span>
-                      </div>
-                      <div className="clear"></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="topClassBox">
-                      <div className="topImg">
-                        <img src="/img/topImg2.png" />
-                      </div>
-                      <div className="topTxt1">
-                        <strong>Joseph Madrix</strong>
-                        <span>SCIENCE LEON - Advance</span>
-                      </div>
-                      <div className="clear"></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="topClassBox">
-                      <div className="topImg">
-                        <img src="img/topImg1.png" />
-                      </div>
-                      <div className="topTxt1">
-                        <strong>Jenifer Johan</strong>
-                        <span>ENGLISH LEON - Basic</span>
-                      </div>
-                      <div className="clear"></div>
-                    </div>
-                  </li>
+                    {toppersdata && toppersdata.length > 0 &&
+                      toppersdata.map((item, index) => {
+                        return <DashboardToppers toppersdata={item} key={index} />;
+                      })}
                 </ul>
               </div>
             </div>

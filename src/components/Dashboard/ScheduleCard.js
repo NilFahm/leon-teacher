@@ -7,10 +7,11 @@ const ScheduleCard = ({ scheduledata }) => {
   const [isclassstart, setIsClassStart] = useState(false);
 
   useEffect(() => {
+    
     if (scheduledata) {
       setInterval(() => {
         setDateString(
-          GetTimeString(scheduledata.scheduledStart, scheduledata.scheduledEnd)
+          GetTimeString(scheduledata.startTime, scheduledata.endTime)
         );
       }, 1000);
     }
@@ -46,6 +47,7 @@ const ScheduleCard = ({ scheduledata }) => {
         s: seconds,
       };
       return obj.h + ":" + obj.m + ":" + obj.s;
+
     } else {
       setIsClassStart(true);
     }
@@ -60,14 +62,14 @@ const ScheduleCard = ({ scheduledata }) => {
       <li className={!isclassstart && "nextActive"}>
         <div className="dashSchBoxIn">
           <div className="dashSchTim">
-            {scheduledata.scheduledStart &&
-              GetFormatedTime(scheduledata.scheduledStart)}{" "}
+            {scheduledata.startTime &&
+              GetFormatedTime(scheduledata.startTime)}{" "}
             -{" "}
-            {scheduledata.scheduledEnd &&
-              GetFormatedTime(scheduledata.scheduledEnd)}
+            {scheduledata.endTime &&
+              GetFormatedTime(scheduledata.endTime)}
           </div>
           <div className="dashLes">
-            {scheduledata.courseName} - {scheduledata.levelName}
+            {scheduledata.courseName} - {scheduledata.courseType}
           </div>
           <div
             className="dashStatus"

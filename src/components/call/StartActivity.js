@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LocalParticipant from "./LocalParticipant";
 import ParticipantNotConnected from "./ParticipantNotConnected";
 import Participant from "./Participant";
 import Chat from "./Chat";
-import Matching from "../activities/Matching";
+import Matching from "../activities/matching/Matching";
+import Activity3 from "../activities/Observing-ability/Activity";
+import Activity9 from "../activities/discrimination/Activity9";
+import Activity10 from "../activities/colour-recognition/Activity10";
+import { Link } from "react-router-dom";
+import Result from "../result/result";
+import Quantity from "../activities/Quantity Identification/Quantity";
+import Mapping from "../activities/Mapping-ability/Mapping";
 
 const StartActivity = ({
   participants,
+  sessionid,
+  StartNewActivity,
   room,
   isaudioon,
   isvideoon,
@@ -18,7 +27,29 @@ const StartActivity = ({
   messagetext,
   setMessageText,
   activityname,
+  Showdata,
+  showresult,
+  details
 }) => {
+  const [obl, setobl] = useState(0)
+
+  useEffect(() => {
+    console.log(showresult,details)
+    console.log(activityname)
+  }, [])
+  
+  // function Showdata(data) {
+  //   if (showresult == true) {
+  //     setShowresult(false)
+  //     // setdetails(data)
+  //     setobl(null)
+  //   } else {
+  //     setShowresult(true)
+  //     setdetails(data)
+  //     setobl(null)
+  //   }
+  // }
+
   return (
     <>
       <div className="container">
@@ -29,20 +60,55 @@ const StartActivity = ({
             <div className="innHeader" style={{ zIndex: "100" }}>
               <h2>
                 {activityname && activityname === "whiteboard" && "White Board"}
-                {activityname && activityname === "matching" && "Matching"}
+                {activityname && activityname === 3 && "Matching"}
+                {activityname && activityname === 1 && "Observing ability"}
+                {activityname && activityname === 4 && "Discrimination"}
+                {activityname && activityname === 5 && "Quantity Identification"}
+                {activityname && activityname === 6 && "Mapping-Ability"}
+                {activityname && activityname === 2 && "Colour Recognition"}
               </h2>
             </div>
-
             <div className="viewImg1">
               <div
                 className="closeBox"
                 onClick={(e) => StartCallOnly()}
                 style={{ cursor: "pointer", zIndex: "100" }}
-              ></div>
+              >
+              </div>
+              {showresult && <div className="charBtnBox"
+                onClick={(e) => { Showdata() }}
+                style={{ bottom: "5px", display: "block", zIndex: "10" }}>
+              </div>}
               <div className="whiteBoardBox position-relative">
-                {activityname && activityname === "matching" && (
+                {/* {activityname && setShowresult(false)} */}
+                {activityname && activityname === 3 && (
                   <>
-                    <Matching />
+                    { showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Matching details={details} detail={activityname} sessionid={sessionid} />}
+                  </>
+                )}{" "}
+                {activityname && activityname === 1 && (
+                  <>
+                    { showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Activity3 details={details} detail={activityname} sessionid={sessionid} obl={obl} />}
+                  </>
+                )}{" "}
+                {activityname && activityname === 4 && (
+                  <>
+                    {showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Activity9 details={details} detail={activityname} sessionid={sessionid} />}
+                  </>
+                )}{" "}
+                {activityname && activityname === 5 && (
+                  <>
+                    {showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Quantity details={details} detail={activityname} sessionid={sessionid} />}
+                  </>
+                )}{" "}
+                {activityname && activityname === 2 && (
+                  <>
+                    {showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Activity10 details={details} detail={activityname} sessionid={sessionid} />}
+                  </>
+                )}{" "}
+                {activityname && activityname === 6 && (
+                  <>
+                    {showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Mapping details={details} detail={activityname} sessionid={sessionid} />}
                   </>
                 )}{" "}
                 {activityname && activityname === "whiteboard" && (
@@ -57,6 +123,7 @@ const StartActivity = ({
                     }}
                   />
                 )}
+                {/* {activitydata && activitydata.activityid == 1(<h6>h</h6>)} */}
               </div>
             </div>
 
@@ -79,8 +146,8 @@ const StartActivity = ({
                   <ul className="studList studList2 studList3">
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[0] ? (
+                        participants.length > 0 &&
+                        participants[0] ? (
                         <Participant
                           key={participants[0].sid}
                           participant={participants[0]}
@@ -91,8 +158,8 @@ const StartActivity = ({
                     </li>
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[1] ? (
+                        participants.length > 0 &&
+                        participants[1] ? (
                         <Participant
                           key={participants[1].sid}
                           participant={participants[1]}
@@ -103,8 +170,8 @@ const StartActivity = ({
                     </li>
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[2] ? (
+                        participants.length > 0 &&
+                        participants[2] ? (
                         <Participant
                           key={participants[2].sid}
                           participant={participants[2]}
@@ -115,8 +182,8 @@ const StartActivity = ({
                     </li>
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[3] ? (
+                        participants.length > 0 &&
+                        participants[3] ? (
                         <Participant
                           key={participants[3].sid}
                           participant={participants[3]}
@@ -127,8 +194,8 @@ const StartActivity = ({
                     </li>
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[4] ? (
+                        participants.length > 0 &&
+                        participants[4] ? (
                         <Participant
                           key={participants[4].sid}
                           participant={participants[4]}
@@ -139,8 +206,8 @@ const StartActivity = ({
                     </li>
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[5] ? (
+                        participants.length > 0 &&
+                        participants[5] ? (
                         <Participant
                           key={participants[5].sid}
                           participant={participants[5]}
@@ -151,8 +218,8 @@ const StartActivity = ({
                     </li>
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[6] ? (
+                        participants.length > 0 &&
+                        participants[6] ? (
                         <Participant
                           key={participants[6].sid}
                           participant={participants[6]}
@@ -163,8 +230,8 @@ const StartActivity = ({
                     </li>
                     <li>
                       {participants &&
-                      participants.length > 0 &&
-                      participants[7] ? (
+                        participants.length > 0 &&
+                        participants[7] ? (
                         <Participant
                           key={participants[7].sid}
                           participant={participants[7]}
