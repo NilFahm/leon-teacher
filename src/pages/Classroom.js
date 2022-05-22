@@ -119,11 +119,12 @@ const Classroom = () => {
 
   useEffect(() => {
     socket.on("activity", (data) => {
-      console.log("activityname", activityname);
+      debugger;
+      console.log("activityname", window.localStorage.getItem("activity"));
       console.log(" data.activity", data.activity);
-      if (data.activity != activityname) {
+      if (data.activity != window.localStorage.getItem("activity")) {
         if (
-          data.activity != activityname &&
+          data.activity !== window.localStorage.getItem("activity") &&
           data.activity !== "startcall" &&
           data.activity !== "endcall"
         ) {
@@ -131,6 +132,10 @@ const Classroom = () => {
           setActivityName(data.activity);
           var detailss = data.details;
           setActivitydata(detailss);
+          window.localStorage.setItem(
+            "currentactdetails",
+            data.details ? JSON.stringify(data.details) : undefined
+          );
           console.log(data.activity);
           setIsActivity(true);
           setBottomAct(false);
@@ -158,17 +163,28 @@ const Classroom = () => {
 
     socket.on("joinroom", (data) => {
       if (window.localStorage.getItem("activity")) {
-        StartCurrentActivity();
+        // StartCurrentActivity();
+        const details = localStorage.getItem("currentactdetails")
+          ? JSON.parse(localStorage.getItem("currentactdetails"))
+          : undefined;
+        StartNewActivity(localStorage.getItem("activity"), details);
       }
     });
   }, [socket]);
 
-  async function StartCurrentActivity() {
-    socket.emit("activity", {
-      activity: window.localStorage.getItem("activity"),
-      roomname: sessionid,
-    });
-  }
+  // async function StartCurrentActivity() {
+  //   debugger;
+  //   socket.emit("activity", {
+  //     activity: localStorage.getItem("activity"),
+  //     roomname: sessionid,
+  //     details: localStorage.getItem("currentactdetails")
+  //       ? JSON.parse(localStorage.getItem("currentactdetails"))
+  //       : undefined,
+  //   });
+  //   if (activityname !== null) {
+  //     setShowresult(false);
+  //   }
+  // }
 
   useEffect(() => {
     if (twiliotoken && twiliotoken !== "") {
@@ -249,7 +265,6 @@ const Classroom = () => {
   }
 
   async function StartNewActivity(actname, details) {
-    debugger;
     socket.emit("activity", {
       activity: actname,
       roomname: sessionid,
@@ -261,7 +276,6 @@ const Classroom = () => {
   }
 
   function Showdata(data) {
-    debugger;
     if (data !== null) {
       if (showresult == false) {
         setShowresult(true);
