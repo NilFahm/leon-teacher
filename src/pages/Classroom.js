@@ -77,7 +77,7 @@ const Classroom = () => {
           { headers: { Authorization: `bearer ${auth.token}` } }
         )
         .then((response) => {
-          // setTwilioToken(response.data.authToken);
+          setTwilioToken(response.data.authToken);
           setGetactivitydetails(response.data);
           console.log(response.data);
           HideCircularProgress();
