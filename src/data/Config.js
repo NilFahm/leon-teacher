@@ -1,3 +1,3 @@
 export const Config = {
-  baseUrl: "https://leon-api.equitec.in",
+  baseUrl: "https://leon-uatapi.equitec.in",
 };

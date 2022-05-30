@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const LocalParticipant = ({ participant, isvideoon, isaudioon }) => {
+const LocalParticipant = ({ participant, isvideoon, isaudioon, auth }) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
 
@@ -88,7 +88,7 @@ const LocalParticipant = ({ participant, isvideoon, isaudioon }) => {
         />
         <audio ref={audioRef} autoPlay={true} />
         <div class="stuName">
-          <span>{participant.identity}</span>
+          <span>{auth && auth.name}</span>
         </div>
       </div>
     </div>

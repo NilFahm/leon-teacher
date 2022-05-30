@@ -101,7 +101,7 @@ const Classroom = () => {
         )
         .then((respone) => {
           // setTwilioToken(response.data.authToken);
-          console.log(respone.data);
+          console.log(respone.data.students);
           setscheduledetails(respone.data);
           HideCircularProgress();
         })
@@ -119,7 +119,6 @@ const Classroom = () => {
 
   useEffect(() => {
     socket.on("activity", (data) => {
-      debugger;
       console.log("activityname", window.localStorage.getItem("activity"));
       console.log(" data.activity", data.activity);
       if (data.activity != window.localStorage.getItem("activity")) {
@@ -134,7 +133,7 @@ const Classroom = () => {
           setActivitydata(detailss);
           window.localStorage.setItem(
             "currentactdetails",
-            data.details ? JSON.stringify(data.details) : undefined
+            data.details ? JSON.stringify(data.details) : ""
           );
           console.log(data.activity);
           setIsActivity(true);
@@ -265,6 +264,7 @@ const Classroom = () => {
   }
 
   async function StartNewActivity(actname, details) {
+    debugger
     socket.emit("activity", {
       activity: actname,
       roomname: sessionid,
@@ -412,6 +412,7 @@ const Classroom = () => {
               isaudioon={isaudioon}
               isvideoon={isvideoon}
               StartCallOnly={StartCallOnly}
+              scheduledetails={scheduledetails}
               messages={messages}
               auth={auth}
               SendMessage={SendMessage}
@@ -425,20 +426,22 @@ const Classroom = () => {
             />
           ) : (
             <StartCall
+             auth={auth}
               participants={participants}
               room={room}
               isaudioon={isaudioon}
               isvideoon={isvideoon}
+              scheduledetails={scheduledetails}
             />
           )}
         </div>
 
         <div className="teachBotomLinks">
-          <a
+          {/* <a
             href="#"
             className="techListIcon"
             style={{ cursor: "pointer" }}
-          ></a>
+          ></a> */}
           {room && (
             <Link
               to=""
@@ -559,7 +562,7 @@ const Classroom = () => {
                       </Link>
                     );
                   })}
-                <Link
+                {/* <Link
                   to=""
                   style={{ cursor: "pointer", height: "10%" }}
                   data-dismiss="modal"
@@ -574,7 +577,7 @@ const Classroom = () => {
                   onClick={(e) => StartNewActivity(6)}
                 >
                   6. Mapping-Ability
-                </Link>
+                </Link> */}
               </div>
               {/* <div className="btnBOx">
                 <a href="#" className="btn" data-dismiss="modal">

@@ -90,7 +90,7 @@ const Dashboard = () => {
                     aria-haspopup="true"
                     aria-expanded="false"
                   >
-                    <img src="/img/dashTechmg.png" />
+                    <img src={auth.avatar}/>
                     <span>{auth.name}</span>
                   </a>
                   <div

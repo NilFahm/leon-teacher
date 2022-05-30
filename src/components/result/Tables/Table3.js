@@ -20,9 +20,9 @@ const Table3 = ({ details, StartNewActivity }) => {
                     return (<tr key={details.studentId} style={{ height: "10%" }}>
                         <td>{details.studentName}</td>
                         <td onClick={(e) => { StartNewActivity(details.studentId) }} style={{ color: "blue", fontSize: "15px", cursor: "pointer" }} ><u>View</u></td>
-                        <td>{details.studentResult && JSON.parse(details.studentResult).ob1 == 1 ? "True" : "-"}</td>
-                        <td>{details.studentResult && JSON.parse(details.studentResult).ob2 == 2 ? "True" : "-"}</td>
-                        <td>{details.studentResult && JSON.parse(details.studentResult).ob3 == 3 ? "True" : "-"}</td>
+                        <td>{details.studentResult && JSON.parse(details.studentResult).ob1 == 1 ? "True" : JSON.parse(details.studentResult).ob1 == "wrong" ? "False" :"-"}</td>
+                        <td>{details.studentResult && JSON.parse(details.studentResult).ob2 == 2 ? "True" : JSON.parse(details.studentResult).ob2 == "wrong" ? "False" :"-"}</td>
+                        <td>{details.studentResult && JSON.parse(details.studentResult).ob3 == 3 ? "True" : JSON.parse(details.studentResult).ob3 == "wrong" ? "False" :"-"}</td>
 
                     </tr>)
                 })}

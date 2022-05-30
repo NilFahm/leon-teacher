@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const Participant = ({ participant }) => {
+const Participant = ({ participant ,scheduledetails}) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
+
   const [isaudioon, setIsAudioOn] = useState(true);
   const [isvideoon, setIsVideoOn] = useState(true);
   const videoRef = useRef();
   const audioRef = useRef();
 
   useEffect(() => {
-    debugger;
+    console.log(scheduledetails.students)
+   
+    // array.filter(x=>x.name === "std1")
     const trackpubsToTracks = (trackMap) =>
       Array.from(trackMap.values())
         .map((publication) => publication.track)
@@ -76,7 +79,6 @@ const Participant = ({ participant }) => {
   }, [videoTracks]);
 
   useEffect(() => {
-    debugger;
     const audioTrack = audioTracks[0];
     if (audioTrack) {
       setIsAudioOn(audioTrack.isEnabled);
@@ -116,7 +118,7 @@ const Participant = ({ participant }) => {
         <audio ref={audioRef} autoPlay={true} />
       </div>
       <div class="stuName">
-        <span>{participant.identity}</span>
+        <span>{scheduledetails && scheduledetails.students.filter(student=>student.email == participant.identity)[0] && scheduledetails.students.filter(student=>student.email == participant.identity)[0].name}</span>
       </div>
     </div>
   );

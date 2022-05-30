@@ -31,7 +31,6 @@ const Login = () => {
   }, [isremember]);
 
   function Remember() {
-    debugger
     var data = JSON.stringify(logindata)
     var bto = btoa(data.toString())
     setIsRemember(bto)

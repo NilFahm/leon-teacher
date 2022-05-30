@@ -3,7 +3,8 @@ import Participant from "./Participant";
 import ParticipantNotConnected from "./ParticipantNotConnected";
 import LocalParticipant from "./LocalParticipant";
 
-const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
+const StartCall = ({ participants, room, isaudioon, isvideoon ,auth,scheduledetails}) => {
+  
   return (
     <>
       <div className="container">
@@ -15,6 +16,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[0] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[0].sid}
                   participant={participants[0]}
                 />
@@ -28,6 +30,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[1] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[1].sid}
                   participant={participants[1]}
                 />
@@ -41,6 +44,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[2] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[2].sid}
                   participant={participants[2]}
                 />
@@ -54,6 +58,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[3] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[3].sid}
                   participant={participants[3]}
                 />
@@ -67,6 +72,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {room ? (
                 <LocalParticipant
+                auth={auth}
                   key={room.localParticipant.sid}
                   participant={room.localParticipant}
                   isaudioon={isaudioon}
@@ -82,6 +88,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[4] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[4].sid}
                   participant={participants[4]}
                 />
@@ -96,6 +103,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[5] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[5].sid}
                   participant={participants[5]}
                 />
@@ -109,6 +117,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[6] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[6].sid}
                   participant={participants[6]}
                 />
@@ -122,6 +131,7 @@ const StartCall = ({ participants, room, isaudioon, isvideoon }) => {
             >
               {participants && participants.length > 0 && participants[7] ? (
                 <Participant
+                scheduledetails={scheduledetails}
                   key={participants[7].sid}
                   participant={participants[7]}
                 />

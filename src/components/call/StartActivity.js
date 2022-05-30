@@ -20,6 +20,7 @@ const StartActivity = ({
   isaudioon,
   isvideoon,
   StartCallOnly,
+  scheduledetails,
   newmessagecount,
   messages,
   auth,
@@ -34,10 +35,10 @@ const StartActivity = ({
   const [obl, setobl] = useState(0)
 
   useEffect(() => {
-    console.log(showresult,details)
-    console.log(activityname)
+    console.log(showresult, details)
+    console.log("scheduledetails", scheduledetails)
   }, [])
-  
+
   // function Showdata(data) {
   //   if (showresult == true) {
   //     setShowresult(false)
@@ -83,12 +84,12 @@ const StartActivity = ({
                 {/* {activityname && setShowresult(false)} */}
                 {activityname && activityname === 3 && (
                   <>
-                    { showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Matching details={details} detail={activityname} sessionid={sessionid} />}
+                    {showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Matching details={details} detail={activityname} sessionid={sessionid} />}
                   </>
                 )}{" "}
                 {activityname && activityname === 1 && (
                   <>
-                    { showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Activity3 details={details} detail={activityname} sessionid={sessionid} obl={obl} />}
+                    {showresult == false ? <Result sessionid={sessionid} StartNewActivity={Showdata} detail={activityname} /> : <Activity3 details={details} detail={activityname} sessionid={sessionid} obl={obl} />}
                   </>
                 )}{" "}
                 {activityname && activityname === 4 && (
@@ -145,10 +146,11 @@ const StartActivity = ({
                 >
                   <ul className="studList studList2 studList3">
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[0] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[0].sid}
                           participant={participants[0]}
                         />
@@ -157,10 +159,11 @@ const StartActivity = ({
                       )}
                     </li>
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[1] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[1].sid}
                           participant={participants[1]}
                         />
@@ -169,10 +172,11 @@ const StartActivity = ({
                       )}
                     </li>
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[2] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[2].sid}
                           participant={participants[2]}
                         />
@@ -181,10 +185,11 @@ const StartActivity = ({
                       )}
                     </li>
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[3] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[3].sid}
                           participant={participants[3]}
                         />
@@ -193,10 +198,11 @@ const StartActivity = ({
                       )}
                     </li>
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[4] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[4].sid}
                           participant={participants[4]}
                         />
@@ -205,10 +211,11 @@ const StartActivity = ({
                       )}
                     </li>
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[5] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[5].sid}
                           participant={participants[5]}
                         />
@@ -217,10 +224,11 @@ const StartActivity = ({
                       )}
                     </li>
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[6] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[6].sid}
                           participant={participants[6]}
                         />
@@ -229,10 +237,11 @@ const StartActivity = ({
                       )}
                     </li>
                     <li>
-                      {participants &&
+                      {participants && scheduledetails &&
                         participants.length > 0 &&
                         participants[7] ? (
                         <Participant
+                          scheduledetails={scheduledetails}
                           key={participants[7].sid}
                           participant={participants[7]}
                         />
@@ -244,6 +253,7 @@ const StartActivity = ({
                     <li className="w100 teachBox">
                       {room ? (
                         <LocalParticipant
+                          auth={auth}
                           key={room.localParticipant.sid}
                           participant={room.localParticipant}
                           isaudioon={isaudioon}
